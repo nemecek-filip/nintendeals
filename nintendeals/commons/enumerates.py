@@ -16,6 +16,7 @@ class Features(str, Enum):
 
 class Platforms(str, Enum):
     NINTENDO_SWITCH = "Nintendo Switch"
+    NINTENDO_SWITCH_2 = "Nintendo Switch 2"
 
     def __str__(self):
         return str(self.value)

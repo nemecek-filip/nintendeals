@@ -8,6 +8,7 @@ SEARCH_URL = "https://search.nintendo.jp/nintendo_soft/search.json"
 
 HARDNAMES = {
     Platforms.NINTENDO_SWITCH: "1_HAC",
+    Platforms.NINTENDO_SWITCH_2: "05_BEE"
 }
 
 

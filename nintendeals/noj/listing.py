@@ -28,3 +28,9 @@ def list_switch_games() -> Iterator[Game]:
     """
 
     yield from list_games(Platforms.NINTENDO_SWITCH)
+
+    yield from list_games(Platforms.NINTENDO_SWITCH_2)
+
+
+def list_switch2_games() -> Iterator[Game]:
+    yield from list_games(Platforms.NINTENDO_SWITCH_2)
