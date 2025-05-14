@@ -13,7 +13,7 @@ def list_games(platform: Platforms) -> Iterator[Game]:
 
 def list_switch_games() -> Iterator[Game]:
     """
-    Get a list of Nintendo WiiU games for the JP region.
+    Get a list of Switch and Switch 2 games for the JP region.
 
     Available Features
     ------------------
@@ -26,10 +26,9 @@ def list_switch_games() -> Iterator[Game]:
     nintendeals.classes.common.Game:
         Information of a game.
     """
+    yield from list_games(Platforms.NINTENDO_SWITCH_2)
 
     yield from list_games(Platforms.NINTENDO_SWITCH)
-
-    yield from list_games(Platforms.NINTENDO_SWITCH_2)
 
 
 def list_switch2_games() -> Iterator[Game]:

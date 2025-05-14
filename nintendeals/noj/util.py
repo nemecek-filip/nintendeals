@@ -6,6 +6,7 @@ from nintendeals.commons.enumerates import Features, Platforms, Ratings, Regions
 
 PLATFORMS = {
     "1_HAC": Platforms.NINTENDO_SWITCH,
+    "05_BEE": Platforms.NINTENDO_SWITCH_2,
 }
 
 RATINGS = {
