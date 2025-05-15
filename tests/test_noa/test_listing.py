@@ -17,3 +17,10 @@ class TestListing(TestCase):
 
             if game.nsuid:
                 self.assertTrue(game.nsuid.startswith("700"))
+
+    def test_list_switch2_games(self):
+        for index, game in enumerate(noa.list_switch2_games()):
+            if index > LIMIT:
+                break
+
+            print(game)

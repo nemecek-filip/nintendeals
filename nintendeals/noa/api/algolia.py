@@ -13,6 +13,7 @@ INDEX = None
 
 PLATFORMS = {
     Platforms.NINTENDO_SWITCH: "Nintendo Switch",
+    Platforms.NINTENDO_SWITCH_2: "Nintendo Switch 2"
 }
 
 PLATFORM_CODES = {
@@ -34,6 +35,32 @@ def _search_index(query, **options):
 def search_by_nsuid(nsuid: str) -> Optional[dict]:
     hits = _search_index(nsuid, restrictSearchableAttributes=["nsuid"])
     return (hits or [{}])[0]
+
+
+def search_by_platform_new(platform: Platforms) -> Iterator[dict]:
+    platform_label = PLATFORMS[platform]
+
+    options = {
+        "filters": f'(corePlatforms:"{platform_label}")',
+        "hitsPerPage": 100,
+    }
+
+    page = -1
+
+    while True:
+        page += 1
+        options["page"] = page
+
+        items = _search_index("", **options)
+
+        if not items:
+            break
+
+        for item in items:
+            yield item
+
+        if len(items) < options["hitsPerPage"]:
+            break
 
 
 def search_by_platform(platform: Platforms) -> Iterator[dict]:

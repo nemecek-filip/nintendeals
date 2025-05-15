@@ -6,7 +6,8 @@ from nintendeals.commons.enumerates import Features, Platforms, Ratings, Regions
 
 PLATFORMS = {
     "Nintendo Switch": Platforms.NINTENDO_SWITCH,
-    "Nintendo Switch – OLED Model": Platforms.NINTENDO_SWITCH
+    "Nintendo Switch – OLED Model": Platforms.NINTENDO_SWITCH,
+    "Nintendo Switch 2": Platforms.NINTENDO_SWITCH_2
 }
 
 
