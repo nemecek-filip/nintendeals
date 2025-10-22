@@ -24,7 +24,7 @@ def scrap(slug):
     else:
         return {}
 
-    store_product = props["initialApolloState"][f'StoreProduct:{{"sku":"{sku}","locale":"en_US"}}']
+    store_product = props["initialApolloState"][f'Product:{{"sku":"{sku}"}}']
 
     return {
         "slug": store_product["urlKey"],
