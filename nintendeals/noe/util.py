@@ -10,6 +10,7 @@ NSUIDS = {
 
 PLATFORMS = {
     "HAC": Platforms.NINTENDO_SWITCH,
+    "BEE": Platforms.NINTENDO_SWITCH_2,
 }
 
 
@@ -20,10 +21,12 @@ def build_game(data: Dict) -> Game:
     if not product_code:
         product_code = None
 
-    if nsuid:
-        platform = NSUIDS[nsuid[:3]]
-    elif product_code:
+    if product_code and product_code[:3] in PLATFORMS:
         platform = PLATFORMS[product_code[:3]]
+    elif any(playable_on in PLATFORMS for playable_on in data.get("playable_on_txt", [])):
+        platform = next(PLATFORMS[playable_on] for playable_on in data["playable_on_txt"] if playable_on in PLATFORMS)
+    elif nsuid:
+        platform = NSUIDS[nsuid[:3]]
     else:
         platform = PLATFORMS[data["playable_on_txt"][0]]
 
@@ -37,6 +40,7 @@ def build_game(data: Dict) -> Game:
 
     game.description = data.get("excerpt")
     game.slug = data.get("url")
+    game.application_id = data.get("application_id_s")
     game.players = data.get("players_to", 0)
     game.free_to_play = data.get("price_regular_f") == 0.0
 

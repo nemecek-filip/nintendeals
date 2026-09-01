@@ -2,9 +2,44 @@ from unittest import TestCase
 
 from nintendeals import noe
 from nintendeals.commons.enumerates import Features, Ratings, Regions, Platforms
+from nintendeals.noe.util import build_game
 
 
 class TestGameInfo(TestCase):
+    def test_build_game_exposes_application_id(self):
+        game = build_game(
+            {
+                "title": "Swordship",
+                "nsuid_txt": "70010000050444",
+                "application_id_s": "01002c60178c4000",
+                "playable_on_txt": ["HAC"],
+            }
+        )
+
+        self.assertEqual(game.application_id, "01002c60178c4000")
+
+    def test_build_game_infers_switch_2_from_product_code(self):
+        game = build_game(
+            {
+                "title": "Switch 2 Game",
+                "nsuid_txt": "70010000000000",
+                "product_code_txt": "BEEPA123A",
+            }
+        )
+
+        self.assertEqual(game.platform, Platforms.NINTENDO_SWITCH_2)
+
+    def test_build_game_infers_switch_2_from_playable_on(self):
+        game = build_game(
+            {
+                "title": "Switch 2 Download",
+                "nsuid_txt": "70010000000000",
+                "playable_on_txt": ["BEE"],
+            }
+        )
+
+        self.assertEqual(game.platform, Platforms.NINTENDO_SWITCH_2)
+
     def test_game_info_non_existant(self):
         game = noe.game_info("60010000000000")
         self.assertIsNone(game)

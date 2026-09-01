@@ -31,10 +31,11 @@ def scrap(slug):
         "title": store_product["name"],
         "nsuid": store_product["nsuid"],
         "product_code": store_product["productCode"],
+        "application_id": store_product.get("applicationId"),
         "languages": store_product["supportedLanguages"],
         "players": max(
             store_product.get("playersMaxLocal") or 1,
             store_product.get("playersMaxOnline") or 1,
         ),
-        "dlc": len(store_product['downloadableContents']) > 0,
+        "dlc": len(store_product["downloadableContents"]) > 0,
     }

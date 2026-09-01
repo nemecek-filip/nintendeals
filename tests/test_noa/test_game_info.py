@@ -2,9 +2,21 @@ from unittest import TestCase
 
 from nintendeals import noa
 from nintendeals.commons.enumerates import Features, Ratings, Regions, Platforms
+from nintendeals.noa.util import build_game
 
 
 class TestGameInfo(TestCase):
+    def test_build_game_exposes_application_id(self):
+        game = build_game(
+            {
+                "platform": "Nintendo Switch",
+                "title": "Swordship",
+                "extra": {"application_id": "01002c60178c4000"},
+            }
+        )
+
+        self.assertEqual(game.application_id, "01002c60178c4000")
+
     def test_game_info_non_existant(self):
         game = noa.game_info(nsuid="60010000000000")
         self.assertIsNone(game)

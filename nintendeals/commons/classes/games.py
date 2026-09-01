@@ -35,6 +35,7 @@ class Game:
 
         self.description: Optional[str] = None
         self.slug: Optional[str] = None
+        self.application_id: Optional[str] = None
 
         self.players: int = 0
 
