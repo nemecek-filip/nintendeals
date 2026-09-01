@@ -10,8 +10,20 @@ SYSTEM_NAMES = {
     Platforms.NINTENDO_SWITCH: "Switch",
 }
 
-PRODUCT_CODE_PREFIXES = "HAC"
+PRODUCT_CODE_PREFIXES = ("HAC", "BEE")
 NSUIDS_PREFIXES = "700"
+
+
+def _expand_document(data: dict) -> Iterator[dict]:
+    nsuids = data.get("nsuid_txt", [])
+    raw_product_codes = data.get("product_code_txt", [])
+    product_codes = [code.replace("-", "") if code[:3] in PRODUCT_CODE_PREFIXES else None for code in raw_product_codes]
+
+    for index in range(max(len(nsuids), len(product_codes))):
+        item = data.copy()
+        item["nsuid_txt"] = nsuids[index] if index < len(nsuids) else None
+        item["product_code_txt"] = product_codes[index] if index < len(product_codes) else None
+        yield item
 
 
 def _search(query: str = "*", nsuid: str = None, platform: Platforms = None) -> Iterator[dict]:
@@ -46,29 +58,11 @@ def _search(query: str = "*", nsuid: str = None, platform: Platforms = None) -> 
             break
 
         for data in json:
-            nsuids = data.get("nsuid_txt", [])
-            product_codes = data["product_code_txt"] = [
-                pc.replace("-", "") for pc in data.get("product_code_txt", []) if pc[:3] == PRODUCT_CODE_PREFIXES
-            ]
-
-            if not any((nsuids, product_codes)):
-                continue
-
-            for i in range(0, max(len(nsuids), len(product_codes))):
-                nsuid = nsuids[i] if i < len(nsuids) else None
-                product_code = product_codes[i] if i < len(product_codes) else None
-
-                data["nsuid_txt"] = nsuid
-                data["product_code_txt"] = product_code
-
-                yield data
+            yield from _expand_document(data)
 
 
 def search_by_nsuid(nsuid: str) -> Optional[dict]:
-    try:
-        return next(_search(nsuid=nsuid))
-    except StopIteration:
-        return None
+    return next((item for item in _search(nsuid=nsuid) if item.get("nsuid_txt") == nsuid), None)
 
 
 def search_by_platform(platform: Platforms) -> Iterator[dict]:

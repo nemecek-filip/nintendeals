@@ -7,7 +7,7 @@ from nintendeals.commons.enumerates import Features, Platforms, Ratings, Regions
 PLATFORMS = {
     "Nintendo Switch": Platforms.NINTENDO_SWITCH,
     "Nintendo Switch – OLED Model": Platforms.NINTENDO_SWITCH,
-    "Nintendo Switch 2": Platforms.NINTENDO_SWITCH_2
+    "Nintendo Switch 2": Platforms.NINTENDO_SWITCH_2,
 }
 
 
@@ -24,6 +24,7 @@ def build_game(data: Dict) -> Game:
 
     game.description = data.get("description")
     game.slug = data.get("urlKey")
+    game.application_id = extra.get("application_id")
     game.free_to_play = data.get("priceRange") == "Free to start"
 
     # Players
