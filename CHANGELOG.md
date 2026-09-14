@@ -13,6 +13,9 @@ Notable package changes and upstream compatibility discoveries are recorded here
 - Validate NOA NSUIDs before making a request, verify that the returned record
   contains the requested NSUID, and treat only HTTP 404 as a missing game.
   Other Algolia request failures continue to propagate.
+- Normalize the English locale prefix returned in current NOE product paths and
+  generate regional URLs using Nintendo's consolidated `nintendo.com` locale
+  routes.
 
 ### Known limitations
 

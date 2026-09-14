@@ -18,8 +18,8 @@ class NAeShop:
 
 
 class EUeShop:
-    FORMAT_NO_LANG = "https://www.nintendo.{domain}{slug}"
-    FORMAT_LANG = "https://www.nintendo.{domain}/{lang}{slug}"
+    FORMAT_LOCALE = "https://www.nintendo.com/{locale}{slug}"
+    FORMAT_RUSSIA = "https://www.nintendo.ru/-{slug}"
 
     FORMAT_ALT = "https://ec.nintendo.com/{country}/{lang}/titles/{nsuid}"
 
@@ -28,63 +28,63 @@ class EUeShop:
 
     @property
     def at_de(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="at", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="de-at", slug=self.game.slug)
 
     @property
     def be_fr(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="be", lang="fr", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="fr-be", slug=self.game.slug)
 
     @property
     def be_nl(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="be", lang="nl", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="nl-be", slug=self.game.slug)
 
     @property
     def ch_de(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="ch", lang="de", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="de-ch", slug=self.game.slug)
 
     @property
     def ch_fr(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="ch", lang="fr", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="fr-ch", slug=self.game.slug)
 
     @property
     def ch_it(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="ch", lang="it", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="it-ch", slug=self.game.slug)
 
     @property
     def de_de(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="de", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="de-de", slug=self.game.slug)
 
     @property
     def es_es(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="es", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="es-es", slug=self.game.slug)
 
     @property
     def fr_fr(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="fr", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="fr-fr", slug=self.game.slug)
 
     @property
     def it_it(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="it", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="it-it", slug=self.game.slug)
 
     @property
     def nl_nl(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="nl", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="nl-nl", slug=self.game.slug)
 
     @property
     def pt_pt(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="pt", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="pt-pt", slug=self.game.slug)
 
     @property
     def ru_ru(self) -> str:
-        return EUeShop.FORMAT_LANG.format(domain="ru", lang="-", slug=self.game.slug)
+        return EUeShop.FORMAT_RUSSIA.format(slug=self.game.slug)
 
     @property
     def uk_en(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="co.uk", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="en-gb", slug=self.game.slug)
 
     @property
     def za_en(self) -> str:
-        return EUeShop.FORMAT_NO_LANG.format(domain="co.za", slug=self.game.slug)
+        return EUeShop.FORMAT_LOCALE.format(locale="en-za", slug=self.game.slug)
 
     @property
     def au_en(self) -> str:
