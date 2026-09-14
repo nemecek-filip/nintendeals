@@ -17,6 +17,10 @@ PLATFORMS = {
 def build_game(data: Dict) -> Game:
     nsuid = data.get("nsuid_txt")
     product_code = data.get("product_code_txt")
+    slug = data.get("url")
+
+    if slug and slug.startswith("/en-gb/"):
+        slug = slug[len("/en-gb") :]
 
     if not product_code:
         product_code = None
@@ -39,7 +43,7 @@ def build_game(data: Dict) -> Game:
     )
 
     game.description = data.get("excerpt")
-    game.slug = data.get("url")
+    game.slug = slug
     game.application_id = data.get("application_id_s")
     game.players = data.get("players_to", 0)
     game.free_to_play = data.get("price_regular_f") == 0.0

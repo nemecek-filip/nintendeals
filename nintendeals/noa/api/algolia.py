@@ -1,7 +1,9 @@
+import re
 import time
 
 from typing import Iterator, Optional
 
+from algoliasearch.exceptions import RequestException
 from algoliasearch.search_client import SearchClient
 
 from nintendeals.commons.enumerates import Platforms
@@ -23,20 +25,42 @@ PLATFORM_CODES = {
 }
 
 
-def _search_index(query, **options):
+def _get_index():
     global INDEX
 
     if not INDEX:
         client = SearchClient.create(APP_ID, API_KEY)
         INDEX = client.init_index(INDEX_NAME)
 
-    response = INDEX.search(query, request_options=options)
+    return INDEX
+
+
+def _search_index(query, **options):
+    response = _get_index().search(query, request_options=options)
     return response.get("hits", [])
 
 
+def _object_id_from_nsuid(nsuid: str) -> Optional[str]:
+    if not isinstance(nsuid, str) or not re.fullmatch(r"[0-9]{14}", nsuid):
+        return None
+
+    return nsuid[0] + nsuid[3:5] + nsuid[7:]
+
+
 def search_by_nsuid(nsuid: str) -> Optional[dict]:
-    hits = _search_index(nsuid, restrictSearchableAttributes=["nsuid"])
-    return (hits or [{}])[0]
+    object_id = _object_id_from_nsuid(nsuid)
+
+    if not object_id:
+        return None
+
+    try:
+        data = _get_index().get_object(object_id)
+    except RequestException as exception:
+        if exception.status_code == 404:
+            return None
+        raise
+
+    return data if data.get("nsuid") == nsuid else None
 
 
 def search_by_platform_new(platform: Platforms) -> Iterator[dict]:
@@ -127,16 +151,13 @@ def search_by_query(query: str, platform: Platforms = None) -> Iterator[dict]:
 
 
 def count_switch_games():
-    global INDEX
-
-    if not INDEX:
-        client = SearchClient.create(APP_ID, API_KEY)
-        INDEX = client.init_index(INDEX_NAME)
-
-    response = INDEX.search("", {
-        "filters": '(corePlatforms:"Nintendo Switch" OR corePlatforms:"Nintendo Switch 2")',
-        "hitsPerPage": 1,
-    })
+    response = _get_index().search(
+        "",
+        {
+            "filters": '(corePlatforms:"Nintendo Switch" OR corePlatforms:"Nintendo Switch 2")',
+            "hitsPerPage": 1,
+        },
+    )
     print("Total hits according to Algolia:", response.get("nbHits"))
 
 

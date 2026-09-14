@@ -177,7 +177,7 @@ for feature, value in game.features.items():
 >> 2017-03-03 00:00:00
 >> 1
 >> PEGI 12
->> https://www.nintendo.co.uk/Games/Nintendo-Switch/The-Legend-of-Zelda-Breath-of-the-Wild-1173609.html
+>> https://www.nintendo.com/en-gb/Games/Nintendo-Switch/The-Legend-of-Zelda-Breath-of-the-Wild-1173609.html
 >>  * Amiibo Supported : True
 >>  * Demo Available : False
 >>  * DLC Available : False

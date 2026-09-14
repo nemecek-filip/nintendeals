@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from nintendeals import noa
 from nintendeals.commons.enumerates import Platforms, Regions
@@ -26,6 +26,7 @@ class TestListing(TestCase):
 
             print(game)
 
+    @skip("Nintendo removed nsuid from the Algolia index's searchable attributes")
     def test_list_all_games(self):
         counter = 0
 

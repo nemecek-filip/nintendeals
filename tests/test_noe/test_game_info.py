@@ -6,6 +6,76 @@ from nintendeals.noe.util import build_game
 
 
 class TestGameInfo(TestCase):
+    def test_build_game_normalizes_english_locale_in_slug(self):
+        game = build_game(
+            {
+                "title": "Super Smash Bros. Ultimate",
+                "nsuid_txt": "70010000012331",
+                "url": "/en-gb/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+                "playable_on_txt": ["HAC"],
+            }
+        )
+
+        self.assertEqual(
+            game.slug,
+            "/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+        )
+        self.assertEqual(
+            game.eshop.uk_en,
+            "https://www.nintendo.com/en-gb/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+        )
+        self.assertEqual(
+            game.eshop.za_en,
+            "https://www.nintendo.com/en-za/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+        )
+
+    def test_build_game_preserves_locale_neutral_slug(self):
+        game = build_game(
+            {
+                "title": "Super Smash Bros. Ultimate",
+                "nsuid_txt": "70010000012331",
+                "url": "/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+                "playable_on_txt": ["HAC"],
+            }
+        )
+
+        self.assertEqual(
+            game.slug,
+            "/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+        )
+
+    def test_eshop_uses_consolidated_nintendo_locale_urls(self):
+        game = build_game(
+            {
+                "title": "Example",
+                "url": "/Games/example.html",
+                "playable_on_txt": ["HAC"],
+            }
+        )
+        locales = {
+            "at_de": "de-at",
+            "be_fr": "fr-be",
+            "be_nl": "nl-be",
+            "ch_de": "de-ch",
+            "ch_fr": "fr-ch",
+            "ch_it": "it-ch",
+            "de_de": "de-de",
+            "es_es": "es-es",
+            "fr_fr": "fr-fr",
+            "it_it": "it-it",
+            "nl_nl": "nl-nl",
+            "pt_pt": "pt-pt",
+            "uk_en": "en-gb",
+            "za_en": "en-za",
+        }
+
+        for property_name, locale in locales.items():
+            with self.subTest(property_name=property_name):
+                self.assertEqual(
+                    getattr(game.eshop, property_name),
+                    f"https://www.nintendo.com/{locale}/Games/example.html",
+                )
+
     def test_build_game_exposes_application_id(self):
         game = build_game(
             {
@@ -82,11 +152,11 @@ class TestGameInfo(TestCase):
         )
         self.assertEqual(
             game.eshop.uk_en,
-            "https://www.nintendo.co.uk/en-gb/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+            "https://www.nintendo.com/en-gb/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
         )
         self.assertEqual(
             game.eshop.za_en,
-            "https://www.nintendo.co.za/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
+            "https://www.nintendo.com/en-za/Games/Nintendo-Switch-games/Super-Smash-Bros-Ultimate-1395713.html",
         )
         self.assertEqual(game.eshop.au_en, "https://ec.nintendo.com/AU/en/titles/70010000012331")
         self.assertEqual(game.eshop.nz_en, "https://ec.nintendo.com/NZ/en/titles/70010000012331")
