@@ -2,7 +2,7 @@
 
 Notable package changes and upstream compatibility discoveries are recorded here.
 
-## Unreleased
+## 3.2.2 - 2026-09-14
 
 ### Fixed
 
@@ -24,6 +24,9 @@ Notable package changes and upstream compatibility discoveries are recorded here
   search pagination makes only the first 1,000 results accessible.
 - Algolia's browse endpoint would support complete enumeration, but Nintendo's
   public search key currently returns HTTP 403 for browse requests.
+
+See [the NOA upstream API notes](docs/noa-upstream-api-notes.md) for verified
+alternative sources and possible follow-up work.
 
 ### Previously completed related work
 
