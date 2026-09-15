@@ -1,4 +1,4 @@
-from unittest import TestCase, skip
+from unittest import TestCase, mock, skip
 
 from nintendeals import noa
 from nintendeals.commons.enumerates import Platforms, Regions
@@ -8,6 +8,21 @@ LIMIT = 20
 
 
 class TestListing(TestCase):
+    def test_list_recent_switch_games(self):
+        data = {
+            "platform": "Nintendo Switch 2",
+            "title": "Recent Game",
+            "nsuid": "70010000135065",
+        }
+
+        with mock.patch("nintendeals.noa.listing.algolia.search_recent_switch_games", return_value=iter([data])):
+            games = list(noa.list_recent_switch_games(limit=500))
+
+        self.assertEqual(len(games), 1)
+        self.assertEqual(games[0].title, "Recent Game")
+        self.assertEqual(games[0].platform, Platforms.NINTENDO_SWITCH_2)
+        self.assertEqual(games[0].region, Regions.NA)
+
     def test_list_switch_games(self):
         for index, game in enumerate(noa.list_switch_games()):
             if index > LIMIT:

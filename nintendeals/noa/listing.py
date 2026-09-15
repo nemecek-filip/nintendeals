@@ -16,6 +16,23 @@ def list_switch2_games() -> Iterator[Game]:
         yield build_game(data)
 
 
+def list_recent_switch_games(limit: int = 1000) -> Iterator[Game]:
+    """
+    Get recent Nintendo Switch and Switch 2 games for the NA region.
+
+    Results are ordered by descending release date. Nintendo does not expose
+    the date on which a record was added to its catalog, so this is intended
+    for frequent incremental imports rather than complete catalog discovery.
+
+    Parameters
+    ----------
+    limit: int
+        Number of games to return, between 1 and 1,000.
+    """
+    for data in algolia.search_recent_switch_games(limit=limit):
+        yield build_game(data)
+
+
 def list_switch_games() -> Iterator[Game]:
     """
     Get a list of Nintendo Switch and Switch 2 games for the NA region.

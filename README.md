@@ -80,6 +80,17 @@ for game in noa.list_switch_games():
     print(game.title, "/", game.nsuid)
 ```
 
+For frequent incremental NOA imports, the release-date-sorted listing avoids
+walking the complete catalog. Nintendo does not expose when a catalog record
+was added, so "recent" here means the latest release dates:
+
+```python
+from nintendeals import noa
+
+for game in noa.list_recent_switch_games(limit=500):
+    print(game.title, "/", game.nsuid, "/", game.release_date)
+```
+
 ```text
 >> ARMS / 70010000000392
 >> Astro Duel Deluxe / 70010000000301
