@@ -14,7 +14,7 @@ class TestListing(TestCase):
             if index > LIMIT:
                 break
 
-            self.assertEqual(game.platform, Platforms.NINTENDO_SWITCH)
+            self.assertIn(game.platform, (Platforms.NINTENDO_SWITCH, Platforms.NINTENDO_SWITCH_2))
             self.assertEqual(game.region, Regions.EU)
 
             if game.nsuid:

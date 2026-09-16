@@ -13,12 +13,11 @@ API_KEY = "a29c6927638bfd8cee23993e51e721c9"
 
 INDEX_NAME = "store_game_en_us"
 INDEX = None
+RECENT_INDEX_NAME = "store_game_en_us_release_des"
+RECENT_INDEX = None
 
 
-PLATFORMS = {
-    Platforms.NINTENDO_SWITCH: "Nintendo Switch",
-    Platforms.NINTENDO_SWITCH_2: "Nintendo Switch 2"
-}
+PLATFORMS = {Platforms.NINTENDO_SWITCH: "Nintendo Switch", Platforms.NINTENDO_SWITCH_2: "Nintendo Switch 2"}
 
 PLATFORM_CODES = {
     Platforms.NINTENDO_SWITCH: "7001",
@@ -35,9 +34,53 @@ def _get_index():
     return INDEX
 
 
+def _get_recent_index():
+    global RECENT_INDEX
+
+    if not RECENT_INDEX:
+        client = SearchClient.create(APP_ID, API_KEY)
+        RECENT_INDEX = client.init_index(RECENT_INDEX_NAME)
+
+    return RECENT_INDEX
+
+
 def _search_index(query, **options):
     response = _get_index().search(query, request_options=options)
     return response.get("hits", [])
+
+
+def search_recent_switch_games(limit: int = 1000) -> Iterator[dict]:
+    """Yield up to ``limit`` Switch games ordered by descending release date."""
+    if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 1000:
+        raise ValueError("limit must be an integer between 1 and 1000")
+
+    page_size = min(limit, 100)
+    options = {
+        "distinct": False,
+        "filters": 'topLevelCategoryCode:"GAMES" AND '
+        '(corePlatforms:"Nintendo Switch" OR corePlatforms:"Nintendo Switch 2")',
+        "hitsPerPage": page_size,
+    }
+
+    yielded = 0
+    page = 0
+
+    while yielded < limit:
+        options["page"] = page
+        response = _get_recent_index().search("", request_options=options)
+        items = response.get("hits", [])
+
+        if not items:
+            break
+
+        for item in items[: limit - yielded]:
+            yield item
+            yielded += 1
+
+        if len(items) < page_size:
+            break
+
+        page += 1
 
 
 def _object_id_from_nsuid(nsuid: str) -> Optional[str]:
@@ -171,8 +214,8 @@ def search_by_prefixes() -> Iterator[dict]:
 
     prefixes = ("7001", "7005", "7007")  # US eShop observed prefixes
     suffix_len = 7
-    sleep_time = 0.1   # seconds between requests
-    max_empty = 5      # stop after this many consecutive empty queries
+    sleep_time = 0.1  # seconds between requests
+    max_empty = 5  # stop after this many consecutive empty queries
 
     options = {
         "allowTyposOnNumericTokens": False,
@@ -234,7 +277,7 @@ def search_missing_by_nsuid(existing_nsuids: set) -> Iterator[dict]:
     for nsuid in existing_nsuids:
         if nsuid.startswith(platform_code) and len(nsuid) >= len(platform_code) + suffix_len:
             try:
-                known_suffixes.add(int(nsuid[len(platform_code):]))
+                known_suffixes.add(int(nsuid[len(platform_code) :]))
             except ValueError:
                 pass
 

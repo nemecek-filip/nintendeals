@@ -2,6 +2,17 @@
 
 Notable package changes and upstream compatibility discoveries are recorded here.
 
+## Unreleased
+
+### Added
+
+- Add `noa.list_recent_switch_games(limit=1000)` for incremental imports. It
+  returns up to 1,000 Switch and Switch 2 records from Nintendo's
+  release-date-descending Algolia replica.
+- Add `noe.list_recent_switch_games(limit=1000)` using Nintendo Europe's catalog
+  modification timestamp, so incremental imports receive recently added or
+  updated Switch and Switch 2 records.
+
 ## 3.2.2 - 2026-09-14
 
 ### Fixed

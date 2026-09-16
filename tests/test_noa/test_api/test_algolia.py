@@ -11,6 +11,28 @@ LIMIT = 20
 
 @ddt.ddt
 class TestAlgolia(TestCase):
+    def test_search_recent_switch_games_uses_release_descending_index(self):
+        index = mock.Mock()
+        index.search.side_effect = [
+            {"hits": [{"nsuid": str(value)} for value in range(100)]},
+            {"hits": [{"nsuid": str(value)} for value in range(100, 200)]},
+        ]
+
+        with mock.patch.object(algolia, "_get_recent_index", return_value=index):
+            result = list(algolia.search_recent_switch_games(limit=150))
+
+        self.assertEqual(len(result), 150)
+        self.assertEqual(index.search.call_count, 2)
+        options = index.search.call_args_list[0].kwargs["request_options"]
+        self.assertFalse(options["distinct"])
+        self.assertIn('topLevelCategoryCode:"GAMES"', options["filters"])
+        self.assertIn('corePlatforms:"Nintendo Switch 2"', options["filters"])
+
+    @ddt.data(0, 1001, -1, 1.5, True, None)
+    def test_search_recent_switch_games_rejects_invalid_limit(self, limit):
+        with self.assertRaises(ValueError):
+            list(algolia.search_recent_switch_games(limit=limit))
+
     @ddt.data(
         ("70010000050443", "7100050443"),
         ("70070000013113", "7700013113"),

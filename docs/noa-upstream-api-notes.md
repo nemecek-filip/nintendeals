@@ -1,6 +1,6 @@
 # Nintendo of America upstream API notes
 
-Last verified: 2026-09-14
+Last verified: 2026-09-15
 
 This document records observations about Nintendo's unofficial, public-facing
 services. It is engineering context, not a promise that `nintendeals` currently
@@ -32,11 +32,31 @@ Verified examples:
 Exact lookup returns HTTP 404 when an object does not exist. Other request
 errors should not be treated as missing products.
 
-Full catalog enumeration is not currently available through the public key:
+The primary index cannot provide full catalog enumeration through the public
+key:
 
 - Ordinary search exposes at most the first 1,000 matching records.
 - The browse endpoint returns HTTP 403 because the key lacks the `browse` ACL.
 - Partitioning by title or facets would not guarantee complete coverage.
+
+The `store_game_en_us_release_des` replica still lists `nsuid` as searchable
+and accepted exact and prefix NSUID queries during live verification. It also
+provides release-date-descending search results, subject to the same 1,000-hit
+pagination limit. Because this replica may simply retain older index settings,
+clients should not assume that NSUID search will remain available indefinitely.
+
+## Nintendo store sitemap
+
+Nintendo publishes the US store sitemap at:
+
+```text
+https://www.nintendo.com/us/store/sitemap.xml
+```
+
+It contained 37,604 store URLs, of which roughly 35,208 matched Switch software
+URL patterns. It mixes software and merchandise. Its `lastmod` values were all
+generated within the same 70-millisecond interval, so they cannot identify
+recently changed products; incremental consumers must instead compare URL sets.
 
 ## Nintendo mobile-app API (ZNEJ)
 
@@ -112,8 +132,8 @@ These are candidates, not implemented features:
    scrapes individual product pages for fields still missing.
 4. Model multiple application IDs, product type, and bundle members while
    retaining the singular `Game.application_id` property for compatibility.
-5. Keep full NOA catalog discovery disabled or explicitly incomplete until a
-   source without a 1,000-record ceiling is verified.
+5. Add a health check for NSUID prefix searching on the release-date replica
+   and use the store sitemap as an independent discovery fallback.
 
 Because these endpoints are undocumented, implementations should use fixture-
 based unit tests plus a small, separately runnable network smoke-test suite.
