@@ -11,6 +11,21 @@ def list_games(platform: Platforms) -> Iterator[Game]:
         yield build_game(data)
 
 
+def list_recent_switch_games(limit: int = 1000) -> Iterator[Game]:
+    """
+    Get recently added or updated Nintendo Switch records for the EU region.
+
+    Results are ordered by Nintendo Europe's catalog modification timestamp.
+
+    Parameters
+    ----------
+    limit: int
+        Number of games to return, between 1 and 1,000.
+    """
+    for data in nintendo.search_recent_switch_games(limit=limit):
+        yield build_game(data)
+
+
 def list_switch_games() -> Iterator[Game]:
     """
     Get a list of Nintendo Switch games for the EU region.

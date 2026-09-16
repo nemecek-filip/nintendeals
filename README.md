@@ -80,6 +80,14 @@ for game in noa.list_switch_games():
     print(game.title, "/", game.nsuid)
 ```
 
+```text
+>> ARMS / 70010000000392
+>> Astro Duel Deluxe / 70010000000301
+>> Axiom Verge / 70010000000821
+>> Azure Striker GUNVOLT: STRIKER PACK / 70010000000645
+>> Beach Buggy Racing / 70010000000721
+```
+
 For frequent incremental NOA imports, the release-date-sorted listing avoids
 walking the complete catalog. Nintendo does not expose when a catalog record
 was added, so "recent" here means the latest release dates:
@@ -89,14 +97,6 @@ from nintendeals import noa
 
 for game in noa.list_recent_switch_games(limit=500):
     print(game.title, "/", game.nsuid, "/", game.release_date)
-```
-
-```text
->> ARMS / 70010000000392
->> Astro Duel Deluxe / 70010000000301
->> Axiom Verge / 70010000000821
->> Azure Striker GUNVOLT: STRIKER PACK / 70010000000645
->> Beach Buggy Racing / 70010000000721
 ```
 
 ```python
@@ -112,6 +112,16 @@ for game in noe.list_switch_games():
 >> Ghost 1.0 / 70010000001386
 >> Resident Evil 0 / 70010000012848
 >> 64.0 / 70010000020867
+```
+
+NOE exposes a catalog modification timestamp, so its recent listing returns
+records that were recently added or updated:
+
+```python
+from nintendeals import noe
+
+for game in noe.list_recent_switch_games(limit=500):
+    print(game.title, "/", game.nsuid, "/", game.release_date)
 ```
 
 ### Searching
