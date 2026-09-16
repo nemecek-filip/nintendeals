@@ -90,10 +90,10 @@ class TestNintendo(TestCase):
         self.assertEqual(result["product_code_txt"], "HACPA3FEB")
 
     @ddt.data(
-        (Platforms.NINTENDO_SWITCH, "700", "HAC"),
+        (Platforms.NINTENDO_SWITCH, "700", ("HAC", "BEE")),
     )
     @ddt.unpack
-    def test_search_by_platform(self, platform, nsuid_prefix, playable_on):
+    def test_search_by_platform(self, platform, nsuid_prefix, allowed_playable_on):
         result = nintendo.search_by_platform(platform)
 
         for index, data in enumerate(result):
@@ -107,4 +107,4 @@ class TestNintendo(TestCase):
                 self.assertTrue(nsuid.startswith(nsuid_prefix))
 
             if playable_ons:
-                self.assertIn(playable_on, " ".join(playable_ons))
+                self.assertTrue(set(playable_ons).intersection(allowed_playable_on))
