@@ -52,7 +52,7 @@ def build_game(data: Dict) -> Game:
     game.publishers = [publisher] if publisher else []
 
     # Rating (ESRB)
-    game.rating = (Ratings.ESRB, data.get("esrbRating"))
+    game.rating = (Ratings.ESRB, data.get("esrbRating") or data.get("contentRatingCode"))
 
     # Features
     filters = list(map(str.lower, data.get("topLevelFilters") or []))

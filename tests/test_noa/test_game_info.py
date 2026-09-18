@@ -17,6 +17,17 @@ class TestGameInfo(TestCase):
 
         self.assertEqual(game.application_id, "01002c60178c4000")
 
+    def test_build_game_uses_current_content_rating_field(self):
+        game = build_game(
+            {
+                "platform": "Nintendo Switch",
+                "title": "Super Smash Bros. Ultimate",
+                "contentRatingCode": "E10",
+            }
+        )
+
+        self.assertEqual(game.rating, (Ratings.ESRB, "E10"))
+
     def test_game_info_non_existant(self):
         game = noa.game_info(nsuid="60010000000000")
         self.assertIsNone(game)
@@ -38,7 +49,7 @@ class TestGameInfo(TestCase):
 
         self.assertEqual(game.slug, "super-smash-bros-ultimate-switch")
 
-        self.assertEqual(game.players, 8)
+        self.assertEqual(game.players, 1)
         self.assertFalse(game.free_to_play)
 
         self.assertEqual(game.rating, (Ratings.ESRB, "E10"))

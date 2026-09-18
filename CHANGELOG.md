@@ -21,6 +21,8 @@ Notable package changes and upstream compatibility discoveries are recorded here
 
 - Allow `noe.game_info(nsuid)` to resolve DLC as well as games, and expose the
   upstream `GAME` or `DLC` value on `Game.content_type`.
+- Read NOA ESRB ratings from the current `contentRatingCode` catalog field while
+  retaining compatibility with the previous `esrbRating` field.
 
 ## 3.2.2 - 2026-09-14
 
