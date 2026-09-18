@@ -12,6 +12,15 @@ Notable package changes and upstream compatibility discoveries are recorded here
 - Add `noe.list_recent_switch_games(limit=1000)` using Nintendo Europe's catalog
   modification timestamp, so incremental imports receive recently added or
   updated Switch and Switch 2 records.
+- Add `noe.list_switch_dlcs()` and `noe.list_recent_switch_dlcs(limit=1000)` for
+  complete and incremental Nintendo Europe DLC imports. DLC remains separate
+  from the existing game listings so catalog update batches cannot displace
+  games from the recent-games window.
+
+### Changed
+
+- Allow `noe.game_info(nsuid)` to resolve DLC as well as games, and expose the
+  upstream `GAME` or `DLC` value on `Game.content_type`.
 
 ## 3.2.2 - 2026-09-14
 

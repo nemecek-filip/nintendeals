@@ -124,6 +124,27 @@ for game in noe.list_recent_switch_games(limit=500):
     print(game.title, "/", game.nsuid, "/", game.release_date)
 ```
 
+Nintendo Europe's DLC catalog is exposed separately so DLC update batches do
+not displace games from the recent-games window. Use the full listing for an
+initial import and the change-date-sorted listing for incremental updates:
+
+```python
+from nintendeals import noe
+
+for dlc in noe.list_switch_dlcs():
+    print(dlc.title, "/", dlc.nsuid, "/", dlc.eshop.uk_en)
+
+for dlc in noe.list_recent_switch_dlcs(limit=500):
+    print(dlc.title, "/", dlc.nsuid, "/", dlc.release_date)
+```
+
+NOE NSUID lookups support both games and DLC:
+
+```python
+dlc = noe.game_info("70050000081125")
+print(dlc.title, "/", dlc.eshop.uk_en)
+```
+
 ### Searching
 
 Built on top of the listing services, these provide a simple way to search for games by title or release_date:

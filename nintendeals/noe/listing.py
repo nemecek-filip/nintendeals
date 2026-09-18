@@ -11,6 +11,11 @@ def list_games(platform: Platforms) -> Iterator[Game]:
         yield build_game(data)
 
 
+def list_dlcs(platform: Platforms) -> Iterator[Game]:
+    for data in nintendo.search_dlcs_by_platform(platform):
+        yield build_game(data)
+
+
 def list_recent_switch_games(limit: int = 1000) -> Iterator[Game]:
     """
     Get recently added or updated Nintendo Switch records for the EU region.
@@ -23,6 +28,21 @@ def list_recent_switch_games(limit: int = 1000) -> Iterator[Game]:
         Number of games to return, between 1 and 1,000.
     """
     for data in nintendo.search_recent_switch_games(limit=limit):
+        yield build_game(data)
+
+
+def list_recent_switch_dlcs(limit: int = 1000) -> Iterator[Game]:
+    """
+    Get recently added or updated Nintendo Switch DLC for the EU region.
+
+    Results are ordered by Nintendo Europe's catalog modification timestamp.
+
+    Parameters
+    ----------
+    limit: int
+        Number of DLC records to return, between 1 and 1,000.
+    """
+    for data in nintendo.search_recent_switch_dlcs(limit=limit):
         yield build_game(data)
 
 
@@ -46,3 +66,8 @@ def list_switch_games() -> Iterator[Game]:
         Information of a game.
     """
     yield from list_games(Platforms.NINTENDO_SWITCH)
+
+
+def list_switch_dlcs() -> Iterator[Game]:
+    """Get the complete Nintendo Switch and Switch 2 DLC catalog for the EU region."""
+    yield from list_dlcs(Platforms.NINTENDO_SWITCH)

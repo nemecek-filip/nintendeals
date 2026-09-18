@@ -43,10 +43,41 @@ class TestNintendo(TestCase):
             limit=500,
         )
 
+    def test_search_recent_switch_dlcs_uses_change_date_order(self):
+        items = iter([{"title": "Recently changed DLC"}])
+
+        with mock.patch.object(nintendo, "_search", return_value=items) as search:
+            result = list(nintendo.search_recent_switch_dlcs(limit=500))
+
+        self.assertEqual(result, [{"title": "Recently changed DLC"}])
+        search.assert_called_once_with(
+            platform=Platforms.NINTENDO_SWITCH,
+            sort="change_date desc, sorting_title asc",
+            limit=500,
+            content_type=nintendo.DLC_CONTENT_TYPE,
+        )
+
     @ddt.data(0, 1001, -1, 1.5, True, None)
     def test_search_recent_switch_games_rejects_invalid_limit(self, limit):
         with self.assertRaises(ValueError):
             list(nintendo.search_recent_switch_games(limit=limit))
+
+    @ddt.data(0, 1001, -1, 1.5, True, None)
+    def test_search_recent_switch_dlcs_rejects_invalid_limit(self, limit):
+        with self.assertRaises(ValueError):
+            list(nintendo.search_recent_switch_dlcs(limit=limit))
+
+    def test_search_dlcs_uses_dlc_platform_fields(self):
+        response = mock.Mock(status_code=200)
+        response.json.return_value = {"response": {"docs": []}}
+
+        with mock.patch.object(nintendo.requests, "get", return_value=response) as get:
+            list(nintendo.search_dlcs_by_platform(Platforms.NINTENDO_SWITCH))
+
+        self.assertEqual(
+            get.call_args.kwargs["params"]["fq"],
+            "type:DLC AND (originally_for_t:HAC OR originally_for_t:BEE)",
+        )
 
     def test_expand_document_preserves_nsuid_product_code_alignment(self):
         data = {
@@ -83,11 +114,12 @@ class TestNintendo(TestCase):
             ]
         )
 
-        with mock.patch.object(nintendo, "_search", return_value=items):
+        with mock.patch.object(nintendo, "_search", return_value=items) as search:
             result = nintendo.search_by_nsuid("70010000049963")
 
         self.assertEqual(result["nsuid_txt"], "70010000049963")
         self.assertEqual(result["product_code_txt"], "HACPA3FEB")
+        search.assert_called_once_with(nsuid="70010000049963", content_type=None)
 
     @ddt.data(
         (Platforms.NINTENDO_SWITCH, "700", ("HAC", "BEE")),

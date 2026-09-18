@@ -12,6 +12,8 @@ SYSTEM_NAMES = {
 
 PRODUCT_CODE_PREFIXES = ("HAC", "BEE")
 NSUIDS_PREFIXES = "700"
+GAME_CONTENT_TYPE = "GAME"
+DLC_CONTENT_TYPE = "DLC"
 
 
 def _expand_document(data: dict) -> Iterator[dict]:
@@ -32,11 +34,16 @@ def _search(
     platform: Platforms = None,
     sort: str = "title asc",
     limit: int = None,
+    content_type: Optional[str] = GAME_CONTENT_TYPE,
 ) -> Iterator[dict]:
     rows = min(limit, 200) if limit else 200
 
+    filters = []
+
+    if content_type:
+        filters.append(f"type:{content_type}")
+
     params = {
-        "fq": "type:GAME",
         "q": query,
         "rows": rows,
         "sort": sort,
@@ -45,11 +52,17 @@ def _search(
     }
 
     if platform:
-        system_name = SYSTEM_NAMES[platform]
-        params["fq"] += f' AND system_names_txt:"{system_name}"'
+        if content_type == DLC_CONTENT_TYPE:
+            filters.append("(originally_for_t:HAC OR originally_for_t:BEE)")
+        else:
+            system_name = SYSTEM_NAMES[platform]
+            filters.append(f'system_names_txt:"{system_name}"')
 
     if nsuid:
-        params["fq"] += f' AND nsuid_txt:"{nsuid}"'
+        filters.append(f'nsuid_txt:"{nsuid}"')
+
+    if filters:
+        params["fq"] = " AND ".join(filters)
 
     yielded = 0
 
@@ -75,11 +88,18 @@ def _search(
 
 
 def search_by_nsuid(nsuid: str) -> Optional[dict]:
-    return next((item for item in _search(nsuid=nsuid) if item.get("nsuid_txt") == nsuid), None)
+    return next(
+        (item for item in _search(nsuid=nsuid, content_type=None) if item.get("nsuid_txt") == nsuid),
+        None,
+    )
 
 
 def search_by_platform(platform: Platforms) -> Iterator[dict]:
     yield from _search(platform=platform)
+
+
+def search_dlcs_by_platform(platform: Platforms) -> Iterator[dict]:
+    yield from _search(platform=platform, content_type=DLC_CONTENT_TYPE)
 
 
 def search_by_query(query: str, platform: Platforms = None) -> Iterator[dict]:
@@ -95,4 +115,17 @@ def search_recent_switch_games(limit: int = 1000) -> Iterator[dict]:
         platform=Platforms.NINTENDO_SWITCH,
         sort="change_date desc, sorting_title asc",
         limit=limit,
+    )
+
+
+def search_recent_switch_dlcs(limit: int = 1000) -> Iterator[dict]:
+    """Yield recently changed Switch DLC records from Nintendo Europe's catalog."""
+    if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= 1000:
+        raise ValueError("limit must be an integer between 1 and 1000")
+
+    yield from _search(
+        platform=Platforms.NINTENDO_SWITCH,
+        sort="change_date desc, sorting_title asc",
+        limit=limit,
+        content_type=DLC_CONTENT_TYPE,
     )

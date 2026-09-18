@@ -17,6 +17,7 @@ PLATFORMS = {
 def build_game(data: Dict) -> Game:
     nsuid = data.get("nsuid_txt")
     product_code = data.get("product_code_txt")
+    original_platform = (data.get("originally_for_t") or "").upper()
     slug = data.get("url")
 
     if slug and slug.startswith("/en-gb/"):
@@ -29,6 +30,8 @@ def build_game(data: Dict) -> Game:
         platform = PLATFORMS[product_code[:3]]
     elif any(playable_on in PLATFORMS for playable_on in data.get("playable_on_txt", [])):
         platform = next(PLATFORMS[playable_on] for playable_on in data["playable_on_txt"] if playable_on in PLATFORMS)
+    elif original_platform in PLATFORMS:
+        platform = PLATFORMS[original_platform]
     elif nsuid:
         platform = NSUIDS[nsuid[:3]]
     else:
@@ -45,6 +48,7 @@ def build_game(data: Dict) -> Game:
     game.description = data.get("excerpt")
     game.slug = slug
     game.application_id = data.get("application_id_s")
+    game.content_type = data.get("type")
     game.players = data.get("players_to", 0)
     game.free_to_play = data.get("price_regular_f") == 0.0
 
@@ -70,7 +74,10 @@ def build_game(data: Dict) -> Game:
     game.publishers = [publisher] if publisher else []
 
     # Rating (PEGI)
-    game.rating = (Ratings.PEGI, data.get("age_rating_sorting_i"))
+    age_rating = data.get("age_rating_sorting_i")
+    if age_rating is None:
+        age_rating = data.get("age_rating_value")
+    game.rating = (Ratings.PEGI, age_rating)
 
     # Features
     game.features = {

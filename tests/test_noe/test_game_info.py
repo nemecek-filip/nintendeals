@@ -110,6 +110,27 @@ class TestGameInfo(TestCase):
 
         self.assertEqual(game.platform, Platforms.NINTENDO_SWITCH_2)
 
+    def test_build_dlc_infers_platform_and_exposes_store_url(self):
+        game = build_game(
+            {
+                "type": "DLC",
+                "title": "Festival Pack",
+                "nsuid_txt": "70050000081125",
+                "originally_for_t": "BEE",
+                "url": "/en-gb/DLC/Festival-Pack-3201580.html",
+                "age_rating_value": "3",
+            }
+        )
+
+        self.assertEqual(game.platform, Platforms.NINTENDO_SWITCH_2)
+        self.assertEqual(game.content_type, "DLC")
+        self.assertEqual(game.rating, (Ratings.PEGI, "3"))
+        self.assertEqual(game.slug, "/DLC/Festival-Pack-3201580.html")
+        self.assertEqual(
+            game.eshop.uk_en,
+            "https://www.nintendo.com/en-gb/DLC/Festival-Pack-3201580.html",
+        )
+
     def test_game_info_non_existant(self):
         game = noe.game_info("60010000000000")
         self.assertIsNone(game)

@@ -33,6 +33,8 @@ class Game:
         self.nsuid: str = nsuid
         self.product_code: str = product_code
 
+        self.content_type: Optional[str] = None
+
         self.description: Optional[str] = None
         self.slug: Optional[str] = None
         self.application_id: Optional[str] = None
